@@ -1290,7 +1290,7 @@ function BranchHome({ role, onOpenBranch }) {
 
       <div className="branch-home-footer">
         <span>Showing {filtered.length} of {totalBranches} · click a branch to open · star to pin</span>
-        <span>Use ⌘K to search · Esc to clear</span>
+        <span>Use Ctrl+F to search · Esc to clear</span>
       </div>
     </div>);
 
@@ -1460,7 +1460,7 @@ function Screen1({ branchName, onCellClick, onAlertsClick, onBackToHome }) {
         <span className="paint-help">
           {paintMode ?
           `Click cells to paint · Esc to exit` :
-          `Click a status, then paint cells · Tip: tick rows to bulk-paint`}
+          `Click a status, then select multiple cells · Tip: tick rows to bulk-paint`}
         </span>
       </div>
 
@@ -1570,7 +1570,7 @@ function Screen1({ branchName, onCellClick, onAlertsClick, onBackToHome }) {
       </div>
 
       <div className="callout" style={{ marginTop: 14 }}>
-        <span className="callout-icon">💡</span>
+        <span className="callout-icon"></span>
         Click any cell to open the Driver Day Detail panel. Or click a status above and paint cells in bulk — tick rows to paint across multiple drivers in one click.
       </div>
     </div>);
