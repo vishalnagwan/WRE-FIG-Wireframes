@@ -411,13 +411,13 @@
   }
   .role-pill.central { background:#e3f2fd; border-color:#1976d2; color:#114b8a; }
   .role-pill.branch  { background:#d4edda; border-color:#4caf50; color:#2a5e2c; }
-  .branch-search {
+  .branch- {
     padding: 6px 10px; font-size: 13px;
     border: 1.5px solid var(--border); border-radius: 4px;
     width: 200px; background: var(--paper-warm);
     font-family: 'DM Sans', sans-serif;
   }
-  .branch-search:focus { outline: 2px solid #4f46e5; outline-offset: -1px; }
+  .branch-:focus { outline: 2px solid #4f46e5; outline-offset: -1px; }
 
   .region-section {
     background: var(--paper);
@@ -1132,7 +1132,7 @@ function FillBar({ pct }) {
 // ─── Screen 0: Branch Home (multi-branch entry point) ───────────────────────
 
 function BranchHome({ role, onOpenBranch }) {
-  const [search, setSearch] = useState('');
+  const [, set] = useState('');
   const [pinnedOnly, setPinnedOnly] = useState(false);
 
   // Scope the directory by role.
@@ -1289,8 +1289,7 @@ function BranchHome({ role, onOpenBranch }) {
       }
 
       <div className="branch-home-footer">
-        <span>Showing {filtered.length} of {totalBranches} · click a branch to open · star to pin</span>
-        <span>Use ⌘K to search · Esc to clear</span>
+        <span>Showing {filtered.length} of {totalBranches} · click a branch to open · star to pin</span>        
       </div>
     </div>);
 
