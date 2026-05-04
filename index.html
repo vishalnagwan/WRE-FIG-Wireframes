@@ -411,13 +411,13 @@
   }
   .role-pill.central { background:#e3f2fd; border-color:#1976d2; color:#114b8a; }
   .role-pill.branch  { background:#d4edda; border-color:#4caf50; color:#2a5e2c; }
-  .branch- {
+  .branch-search {
     padding: 6px 10px; font-size: 13px;
     border: 1.5px solid var(--border); border-radius: 4px;
     width: 200px; background: var(--paper-warm);
     font-family: 'DM Sans', sans-serif;
   }
-  .branch-:focus { outline: 2px solid #4f46e5; outline-offset: -1px; }
+  .branch-search:focus { outline: 2px solid #4f46e5; outline-offset: -1px; }
 
   .region-section {
     background: var(--paper);
@@ -972,7 +972,7 @@
 <div id="root"></div>
 <script type="text/babel">
 
-const { useState, useCallback, useEffect, useMemo } = React;
+// hooks via React.*
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -1132,11 +1132,11 @@ function FillBar({ pct }) {
 // ─── Screen 0: Branch Home (multi-branch entry point) ───────────────────────
 
 function BranchHome({ role, onOpenBranch }) {
-  const [, set] = useState('');
-  const [pinnedOnly, setPinnedOnly] = useState(false);
+  const [search, setSearch] = React.useState('');
+  const [pinnedOnly, setPinnedOnly] = React.useState(false);
 
   // Scope the directory by role.
-  const scopedBranches = useMemo(() => {
+  const scopedBranches = React.useMemo(() => {
     if (role === 'branch') {
       return ALL_BRANCHES.filter((b) => BRANCH_USER_ASSIGNMENTS.includes(b.name));
     }
@@ -1144,7 +1144,7 @@ function BranchHome({ role, onOpenBranch }) {
   }, [role]);
 
   // Apply search + pinned filters.
-  const filtered = useMemo(() => {
+  const filtered = React.useMemo(() => {
     let list = scopedBranches;
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -1157,7 +1157,7 @@ function BranchHome({ role, onOpenBranch }) {
   }, [scopedBranches, search, pinnedOnly]);
 
   // Group by region (Central Dispatch view).
-  const grouped = useMemo(() => {
+  const grouped = React.useMemo(() => {
     const order = ['Mid-Atlantic', 'Mid-South', 'South', 'North'];
     const map = {};
     filtered.forEach((b) => {(map[b.region] = map[b.region] || []).push(b);});
@@ -1289,7 +1289,8 @@ function BranchHome({ role, onOpenBranch }) {
       }
 
       <div className="branch-home-footer">
-        <span>Showing {filtered.length} of {totalBranches} · click a branch to open · star to pin</span>        
+        <span>Showing {filtered.length} of {totalBranches} · click a branch to open · star to pin</span>
+        <span>Use ⌘K to search · Esc to clear</span>
       </div>
     </div>);
 
@@ -1298,13 +1299,13 @@ function BranchHome({ role, onOpenBranch }) {
 // ─── Screen 1: Monthly Grid ───────────────────────────────────────────────────
 
 function Screen1({ branchName, onCellClick, onAlertsClick, onBackToHome }) {
-  const [showBoth, setShowBoth] = useState(false);
-  const [month, setMonth] = useState('May 2026');
-  const [paintMode, setPaintMode] = useState(null); // null | 'wa'|'wp'|'pto'|'co'|'oc'|'clear'
-  const [selectedRows, setSelectedRows] = useState(new Set());
-  const [schedule, setSchedule] = useState(SCHEDULE);
-  const [recentlyPainted, setRecentlyPainted] = useState({}); // 'driverId-dk' -> timestamp
-  const [paintCount, setPaintCount] = useState(0); // most-recent batch size for status banner
+  const [showBoth, setShowBoth] = React.useState(false);
+  const [month, setMonth] = React.useState('May 2026');
+  const [paintMode, setPaintMode] = React.useState(null); // null | 'wa'|'wp'|'pto'|'co'|'oc'|'clear'
+  const [selectedRows, setSelectedRows] = React.useState(new Set());
+  const [schedule, setSchedule] = React.useState(SCHEDULE);
+  const [recentlyPainted, setRecentlyPainted] = React.useState({}); // 'driverId-dk' -> timestamp
+  const [paintCount, setPaintCount] = React.useState(0); // most-recent batch size for status banner
 
   // Paint chips that are bulk-safe. TR is intentionally excluded — training has cohort
   // context that should still go through the day-detail panel.
@@ -1318,14 +1319,14 @@ function Screen1({ branchName, onCellClick, onAlertsClick, onBackToHome }) {
 
 
   // Apply or remove the global paint-active class so cells get the crosshair cursor.
-  useEffect(() => {
+  React.useEffect(() => {
     if (paintMode) document.body.classList.add('paint-active');else
     document.body.classList.remove('paint-active');
     return () => document.body.classList.remove('paint-active');
   }, [paintMode]);
 
   // Esc exits paint mode and clears row selection.
-  useEffect(() => {
+  React.useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') {
         setPaintMode(null);
@@ -1692,7 +1693,7 @@ function Screen2({ driver, dayKey, dayLabel, onClose, onAlertClick }) {
 // ─── Screen 3: Change Alerts ─────────────────────────────────────────────────
 
 function Screen3({ onAlertClick, highlightId }) {
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = React.useState('all');
 
   const groups = [
   { key: 'urgent', label: 'WITHIN 24 HOURS · URGENT', items: ALERTS.filter((a) => a.urgency === 'urgent') },
@@ -1849,32 +1850,32 @@ function Screen4() {
 // ─── App Shell ────────────────────────────────────────────────────────────────
 
 function App() {
-  const [role, setRole] = useState('central'); // 'central' | 'branch'
-  const [activeBranch, setActiveBranch] = useState(null); // when null → BranchHome shown
-  const [activeTab, setActiveTab] = useState('grid');
-  const [panelDriver, setPanelDriver] = useState(null);
-  const [panelDay, setPanelDay] = useState(null);
-  const [panelDayLabel, setPanelDayLabel] = useState('');
-  const [highlightAlert, setHighlightAlert] = useState(null);
+  const [role, setRole] = React.useState('central'); // 'central' | 'branch'
+  const [activeBranch, setActiveBranch] = React.useState(null); // when null → BranchHome shown
+  const [activeTab, setActiveTab] = React.useState('grid');
+  const [panelDriver, setPanelDriver] = React.useState(null);
+  const [panelDay, setPanelDay] = React.useState(null);
+  const [panelDayLabel, setPanelDayLabel] = React.useState('');
+  const [highlightAlert, setHighlightAlert] = React.useState(null);
 
-  const openPanel = useCallback((driver, dk, dayLabel) => {
+  const openPanel = React.useCallback((driver, dk, dayLabel) => {
     setPanelDriver(driver);
     setPanelDay(dk);
     setPanelDayLabel(dayLabel);
   }, []);
 
-  const closePanel = useCallback(() => {
+  const closePanel = React.useCallback(() => {
     setPanelDriver(null);
     setPanelDay(null);
   }, []);
 
-  const goToAlerts = useCallback((alertId) => {
+  const goToAlerts = React.useCallback((alertId) => {
     closePanel();
     setHighlightAlert(alertId || null);
     setActiveTab('alerts');
   }, [closePanel]);
 
-  const handleAlertClick = useCallback((alert) => {
+  const handleAlertClick = React.useCallback((alert) => {
     const driver = DRIVERS.find((d) => d.id === alert.driverId);
     if (driver) {
       setHighlightAlert(null);
@@ -1887,14 +1888,14 @@ function App() {
     }
   }, [openPanel]);
 
-  const openBranch = useCallback((branch) => {
+  const openBranch = React.useCallback((branch) => {
     setActiveBranch(branch);
     setActiveTab('grid');
     closePanel();
     setHighlightAlert(null);
   }, [closePanel]);
 
-  const goHome = useCallback(() => {
+  const goHome = React.useCallback(() => {
     setActiveBranch(null);
     closePanel();
     setHighlightAlert(null);
